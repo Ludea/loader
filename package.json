@@ -1,0 +1,30 @@
+{
+    "name": "@dev/loaders",
+    "version": "1.0.0",
+    "types": "dist/index",
+    "main": "dist/index",
+    "module": "dist/index",
+    "private": true,
+    "files": [
+        "dist",
+        "src"
+    ],
+    "scripts": {
+        "build": "yarn clean && yarn compile",
+        "clean": "rimraf dist && rimraf *.tsbuildinfo",
+        "compile": "tsc -b tsconfig.build.json",
+        "watch": "tsc -b tsconfig.build.json -w",
+        "watch:dev": "yarn watch"
+    },
+    "devDependencies": {
+        "@babylonjs/core": "^6.6.0",
+        "@types/crypto-js": "^4.1.1",
+        "@types/node": "^18.16.16",
+        "rimraf": "5.0.1",
+        "typescript": "^5.0.4"
+    },
+    "sideEffects": false,
+    "dependencies": {
+        "crypto-js": "^4.1.1"
+    }
+}
