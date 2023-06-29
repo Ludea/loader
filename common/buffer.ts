@@ -1,4 +1,4 @@
-import { MD5, enc, lib } from "crypto-js" ;
+import { MD5, enc, lib } from 'crypto-js' ;
 import crc32 from './crc32';
 
 type BufferEncoding = 'ascii' | 'utf8' | 'utf-8' | 'utf16le' | 'usc2' | 'usc-2' | 'base64' | 'latin1' | 'binary' | 'hex';

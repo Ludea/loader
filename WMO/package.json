@@ -12,8 +12,8 @@
     "scripts": {
         "build": "yarn clean && yarn compile",
         "clean": "rimraf dist && rimraf *.tsbuildinfo",
-        "compile": "tsc -b tsconfig.build.json",
-        "watch": "tsc -b tsconfig.build.json -w",
+        "compile": "tsc",
+        "watch": "tsc -w",
         "watch:dev": "yarn watch"
     },
     "devDependencies": {

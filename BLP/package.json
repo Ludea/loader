@@ -1,0 +1,23 @@
+{
+    "name": "blploader",
+    "version": "1.0.0",
+    "types": "dist/index",
+    "main": "dist/index",
+    "module": "dist/index",
+    "private": true,
+    "scripts": {
+        "build": "yarn clean && yarn compile",
+        "clean": "rimraf dist && rimraf *.tsbuildinfo",
+        "compile": "tsc -b tsconfig.json",
+        "watch": "tsc -b tsconfig.json -w",
+        "watch:dev": "yarn watch"
+    },
+    "devDependencies": {
+        "@types/crypto-js": "^4.1.1",
+        "rimraf": "5.0.1",
+        "typescript": "^5.0.4"
+    },
+    "dependencies": {
+        "crypto-js": "^4.1.1"
+    }
+}
