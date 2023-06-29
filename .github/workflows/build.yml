@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-12, ubuntu-22.04, windows-2022]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 16
+      - name: install app dependencies and build BLPLoader  
+        run: |
+          cd BLP 
+          yarn && yarn build
