@@ -3,12 +3,10 @@
     "version": "1.0.0",
     "types": "dist/index",
     "main": "dist/index",
-    "module": "dist/index",
-    "private": true,
     "scripts": {
         "build": "yarn clean && yarn compile",
         "clean": "rimraf dist",
-        "compile": "tsc && esbuild Index.tsx --outfile=BLP.js --bundle --minify --loader:.ts=ts",
+        "compile": "tsc && esbuild Index.tsx --outfile=dist/BLP.js --bundle --minify --loader:.ts=ts",
         "watch": "tsc -w",
         "watch:dev": "yarn watch"
     },
