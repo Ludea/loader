@@ -19,8 +19,9 @@ for (let i = 0; i < 256; i++) {
  */
 export default function crc32(buf: ArrayBuffer): number {
 	let res = -1;
+	const view = new DataView(buf);
 	for (let i = 0; i < buf.byteLength; i++)
-		res = table[(res ^ buf[i]) & 0xFF] ^ (res >>> 8);
+		res = table[(res ^ view.getInt32(i)) & 0xFF] ^ (res >>> 8);
 
 	return res ^ -1;
 }

@@ -1,4 +1,4 @@
-import { MD5, enc, lib } from 'crypto-js' ;
+//import { MD5, enc, lib } from 'crypto-js' ;
 import crc32 from './crc32';
 
 type BufferEncoding = 'ascii' | 'utf8' | 'utf-8' | 'utf16le' | 'usc2' | 'usc-2' | 'base64' | 'latin1' | 'binary' | 'hex';
@@ -47,9 +47,10 @@ export default class BufferWrapper {
 	 * @returns The calculated hash.
 	 */
 	toHash(): string {
-		const uint8Array = new Uint8Array(this.buffer);
-		const wordArray = lib.WordArray.create(uint8Array);
-        return MD5(wordArray).toString(enc.Hex);
+		//const uint8Array = new Uint8Array(this.buffer);
+		//const wordArray = lib.WordArray.create(uint8Array);
+        //return MD5(wordArray).toString(enc.Hex);
+		return "foo";
 	}
 
 	/** @returns The calculated CRC32 hash. */
@@ -417,10 +418,11 @@ export default class BufferWrapper {
 	readStringBlock(chunkSize: number): Map<number, string> {
 		const chunk = this.readBuffer(chunkSize);
 		const entries = new Map<number, string>();
+		const view = new DataView(chunk);
 
 		let readOfs = 0;
 		for (let i = 0; i < chunkSize; i++) {
-			if (chunk[i] === 0x0) {
+			if (view.getInt32(i) === 0x0) {
 				// Skip padding bytes.
 				if (readOfs === i) {
 					readOfs += 1;

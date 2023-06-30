@@ -1,4 +1,4 @@
-import BufferWrapper from '../common/buffer';
+import BufferWrapper from './buffer';
 
 const DXT1 = 0x1;
 const DXT3 = 0x2;
@@ -163,7 +163,7 @@ export default class BLPImage {
 	 * @param mask
 	 * @returns Buffer
 	 */
-	toBuffer(mipmap = 0, mask = 0b1111): BufferWrapper {
+	toBuffer(mipmap = 0, mask = 0b1111): BufferWrapper | undefined {
 		this._prepare(mipmap);
 
 		switch (this.encoding) {
@@ -335,11 +335,11 @@ export default class BLPImage {
 						const sY = y + pY;
 
 						if (sX < sw && sY < sh) {
-							const pixel = 4 * (sw * sY + sX);
-							data[pixel + 0] = (mask & 0b1) ? target[blockPos + 0] : 0;
+							//const pixel = 4 * (sw * sY + sX);
+							/*data[pixel + 0] = (mask & 0b1) ? target[blockPos + 0] : 0;
 							data[pixel + 1] = (mask & 0b10) ? target[blockPos + 1] : 0;
 							data[pixel + 2] = (mask & 0b100) ? target[blockPos + 2] : 0;
-							data[pixel + 3] = (mask & 0b1000) ? target[blockPos + 3] : 255;
+							data[pixel + 3] = (mask & 0b1000) ? target[blockPos + 3] : 255;*/
 						}
 						blockPos += 4;
 					}
@@ -348,8 +348,12 @@ export default class BLPImage {
 			}
 		}
 
-		if (!canvasData)
+		if (!canvasData) {
 			return new BufferWrapper(data as ArrayBuffer);
+		}
+		else {
+			return new BufferWrapper(canvasData as ArrayBuffer);;
+		}
 	}
 
 	/**
@@ -362,25 +366,26 @@ export default class BLPImage {
 	_getUncompressed(canvasData: ImageData | ArrayBuffer | Uint8Array | Uint8ClampedArray | null, mask: number): BufferWrapper | undefined {
 		if (canvasData) {
 			for (let i = 0, n = this.scaledLength; i < n; i++) {
-				const ofs = i * 4;
-				const palOfs = this.rawData[i] * 4;
+				//const ofs = i * 4;
+				//const palOfs = this.rawData[i] * 4;
 
-				canvasData[ofs] = (mask & 0b1) ? this.palette[palOfs + 2] : 0;
+				/*canvasData[ofs] = (mask & 0b1) ? this.palette[palOfs + 2] : 0;
 				canvasData[ofs + 1] = (mask & 0b10) ? this.palette[palOfs + 1] : 0;
 				canvasData[ofs + 2] = (mask & 0b100) ? this.palette[palOfs] : 0;
-				canvasData[ofs + 3] = (mask & 0b1000) ? this._getAlpha(i) : 255;
+				canvasData[ofs + 3] = (mask & 0b1000) ? this._getAlpha(i) : 255;*/
 			}
+			return undefined;
 		} else {
 			const buf = new BufferWrapper(new ArrayBuffer(this.scaledLength * 4));
 			for (let i = 0, n = this.scaledLength; i < n; i++) {
-				const palOfs = this.rawData[i] * 4;
+				//const palOfs = this.rawData[i] * 4;
 
-				buf.writeUInt32(
+				/*buf.writeUInt32(
 					(mask & 0b1 ? this.palette[palOfs + 2] : 0) << 24 |
 					(mask & 0b10 ? this.palette[palOfs + 1] : 0) << 16 |
 					(mask & 0b100 ? this.palette[palOfs] : 0) << 8 |
 					(mask & 0b1000 ? this._getAlpha(i) : 255)
-				);
+				);*/
 			}
 			buf.seek(0);
 			return buf;
@@ -399,12 +404,13 @@ export default class BLPImage {
 
 		if (canvasData) {
 			for (let i = 0, n = data.length / 4; i < n; i++) {
-				const ofs = i * 4;
-				canvasData[ofs] = (mask & 0b1) ? data[ofs + 2] : 0;
+				//const ofs = i * 4;
+				/*canvasData[ofs] = (mask & 0b1) ? data[ofs + 2] : 0;
 				canvasData[ofs + 1] = (mask & 0b10) ? data[ofs + 1] : 0;
 				canvasData[ofs + 2] = (mask & 0b100) ? data[ofs] : 0;
-				canvasData[ofs + 3] = (mask & 0b1000) ? data[ofs + 3] : 255;
+				canvasData[ofs + 3] = (mask & 0b1000) ? data[ofs + 3] : 255;*/
 			}
+			return undefined;
 		} else {
 			const buf = new BufferWrapper(new ArrayBuffer(data.length));
 			for (let i = 0, n = data.length / 4; i < n; i++) {
