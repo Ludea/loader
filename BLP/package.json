@@ -1,8 +1,8 @@
 {
     "name": "blploader",
     "version": "1.0.0",
-    "types": "dist/index",
-    "main": "dist/index",
+    "types": "dist/Index",
+    "main": "BLP",
     "scripts": {
         "build": "yarn clean && yarn compile",
         "clean": "rimraf dist",
