@@ -16,7 +16,14 @@
         "typescript": "^5.0.4"
     },
     "dependencies": {
+        "assert": "^2.0.0",
+        "buffer": "^6.0.3",
         "crypto-js": "^4.1.1",
-        "esbuild": "^0.18.10"
+        "esbuild": "^0.18.10",
+        "events": "^3.3.0",
+        "memfs": "^4.2.0",
+        "path": "^0.12.7",
+        "stream": "^0.0.2",
+        "utils": "^0.3.1"
     }
 }

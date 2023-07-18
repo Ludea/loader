@@ -1,4 +1,5 @@
 import BufferWrapper from './buffer';
+import { fs } from 'memfs';
 
 const DXT1 = 0x1;
 const DXT3 = 0x2;
@@ -52,8 +53,10 @@ export default class BLPImage {
 	 * Construct a new BLPImage instance.
 	 * @param data - The BLP file data.
 	 */
-	constructor(data: BufferWrapper) {
-		this.data = data;
+	constructor(filepath: string) {
+		this.readFile(filepath).then((data: any) => {
+			this.data = data;
+		})
 
 		// Check magic value..
 		if (this.data.readUInt32() !== BLP_MAGIC)
@@ -428,4 +431,21 @@ export default class BLPImage {
 			return buf;
 		}
 	}
+
+	async readFile(file: string, offset = 0, length = file.length): Promise<BufferWrapper> {
+        let buf = new ArrayBuffer(length);
+		let view = new DataView(buf);
+        fs.open(file, 'r', (err, fd: any) => {
+            if (err) throw err;
+            fs.read(fd, buf, offset, length, 100, (err, bytesRead: any) => {
+              if (err) throw err;
+			  view.setUint32(length, bytesRead)
+              fs.close(fd, (err) => {
+                if (err) throw err;
+              });
+            })
+        });
+
+        return new BufferWrapper(buf);
+    }
 }
