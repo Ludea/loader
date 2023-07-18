@@ -2,7 +2,7 @@
     "name": "blploader",
     "version": "1.0.0",
     "types": "dist/Index",
-    "main": "BLP",
+    "main": "dist/BLP",
     "scripts": {
         "build": "yarn clean && yarn compile",
         "clean": "rimraf dist",
