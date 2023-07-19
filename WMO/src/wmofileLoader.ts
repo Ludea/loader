@@ -1,8 +1,14 @@
-import type { ISceneLoaderPluginAsync, ISceneLoaderPluginFactory, ISceneLoaderPlugin, ISceneLoaderAsyncResult } from "@babylonjs/core/Loading/sceneLoader";
-import type { Scene } from "@babylonjs/core/scene";
+import type { 
+	ISceneLoaderPluginAsync, 
+	ISceneLoaderPluginFactory, 
+	ISceneLoaderPlugin, 
+	ISceneLoaderAsyncResult, 
+	ISceneLoaderProgressEvent 
+} from "@babylonjs/core/Loading/sceneLoader";
+import type { Scene, IDisposable } from "@babylonjs/core/scene";
 import { AssetContainer } from "@babylonjs/core/assetContainer";
 import type { Nullable } from "@babylonjs/core/types";
-import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
+import type { IDataBuffer } from "@babylonjs/core/Misc/dataReader";
 import BufferWrapper from "./buffer";
 
 type WMOFog = {
@@ -105,6 +111,35 @@ type WMOMaterialInfo = {
 	materialID: number
 };
 
+/**
+ * Interface that contains the data for the WMO asset.
+ */
+export interface IWMOLoaderData {
+    /**
+     * The object that represents the WMO JSON.
+     */
+    json: Object;
+
+    /**
+     * The BIN chunk of a binary WMO.
+     */
+    bin: Nullable<IDataBuffer>;
+}
+
+/** @internal */
+export interface IWMOLoader extends IDisposable {
+    importMeshAsync: (
+        meshesNames: any,
+        scene: Scene,
+        container: Nullable<AssetContainer>,
+        data: IWMOLoaderData,
+        rootUrl: string,
+        onProgress?: (event: ISceneLoaderProgressEvent) => void,
+        fileName?: string
+    ) => Promise<ISceneLoaderAsyncResult>;
+    loadAsync: (scene: Scene, data: IWMOLoaderData, rootUrl: string, onProgress?: (event: ISceneLoaderProgressEvent) => void, fileName?: string) => Promise<void>;
+}
+
 export class WMOFileLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFactory {
 	data: BufferWrapper;
 	loaded: boolean;
@@ -144,7 +179,7 @@ export class WMOFileLoader implements ISceneLoaderPluginAsync, ISceneLoaderPlugi
 	vertexColours: Array<Array<number>>;
 	public name = "wmo";
 	public extensions = ".wmo";
-	private _assetContainer: Nullable<AssetContainer> = null;
+	private _loader: Nullable<IWMOLoader> = null;
 
 	/**
 	 * Construct a new WMOFileLoader instance.
@@ -167,92 +202,6 @@ export class WMOFileLoader implements ISceneLoaderPluginAsync, ISceneLoaderPlugi
 			}
 		}
 	}
-
-	    /**
-     * Instantiates a OBJ file loader plugin.
-     * @returns the created plugin
-     */
-		createPlugin(): ISceneLoaderPluginAsync | ISceneLoaderPlugin {
-			return new WMOFileLoader();
-		}
-
-	    /**
-     * Imports one or more meshes from the loaded OBJ data and adds them to the scene
-     * @param meshesNames a string or array of strings of the mesh names that should be loaded from the file
-     * @param scene the scene the meshes should be added to
-     * @param data the OBJ data to load
-     * @param rootUrl root url to load from
-     * @returns a promise containing the loaded meshes, particles, skeletons and animations
-     */
-		public importMeshAsync(meshesNames: any, scene: Scene, data: BufferWrapper, rootUrl: string): Promise<ISceneLoaderAsyncResult> {
-			//get the meshes from OBJ file
-			return this._parseSolid(meshesNames, scene, data, rootUrl).then((meshes) => {
-				return {
-					meshes: meshes,
-					particleSystems: [],
-					skeletons: [],
-					animationGroups: [],
-					transformNodes: [],
-					geometries: [],
-					lights: [],
-				};
-			});
-		}
-
-		    /**
-     * Imports all objects from the loaded OBJ data and adds them to the scene
-     * @param scene the scene the objects should be added to
-     * @param data the OBJ data to load
-     * @param rootUrl root url to load from
-     * @returns a promise which completes when objects have been loaded to the scene
-     */
-			public loadAsync(scene: Scene, data: string, rootUrl: string): Promise<void> {
-				//Get the 3D model
-				return this.importMeshAsync(null, scene, data, rootUrl).then(() => {
-					// return void
-				});
-			}
-
-	    /**
-     * Load into an asset container.
-     * @param scene The scene to load into
-     * @param data The data to import
-     * @param rootUrl The root url for scene and resources
-     * @returns The loaded asset container
-     */
-		public loadAssetContainerAsync(scene: Scene, data: string, rootUrl: string): Promise<AssetContainer> {
-			const container = new AssetContainer(scene);
-			this._assetContainer = container;
-	
-			return this.importMeshAsync(null, scene, data, rootUrl)
-				.then((result) => {
-					result.meshes.forEach((mesh) => container.meshes.push(mesh));
-					result.meshes.forEach((mesh) => {
-						const material = mesh.material;
-						if (material) {
-							// Materials
-							if (container.materials.indexOf(material) == -1) {
-								container.materials.push(material);
-	
-								// Textures
-								const textures = material.getActiveTextures();
-								textures.forEach((t) => {
-									if (container.textures.indexOf(t) == -1) {
-										container.textures.push(t);
-									}
-								});
-							}
-						}
-					});
-					this._assetContainer = null;
-					return container;
-				})
-				.catch((ex) => {
-					this._assetContainer = null;
-					throw ex;
-				});
-		}
-	
 
 	/**
 	 * Load the WMO object.
@@ -315,11 +264,98 @@ export class WMOFileLoader implements ISceneLoaderPluginAsync, ISceneLoaderPlugi
 
 		return [x, y, z];
 	}
-}
 
-if (SceneLoader) {
-	//Add this loader into the register plugin
-	SceneLoader.RegisterPlugin(new WMOFileLoader());
+	/** @internal */
+	public createPlugin(): ISceneLoaderPluginAsync | ISceneLoaderPlugin {
+		return new WMOFileLoader();
+	}
+
+	  /**
+     * @internal
+     */
+	  public importMeshAsync(
+        meshesNames: any,
+        scene: Scene,
+        data: any,
+        rootUrl: string,
+        onProgress?: (event: ISceneLoaderProgressEvent) => void,
+        fileName?: string
+    ): Promise<ISceneLoaderAsyncResult> {
+        return Promise.resolve().then(() => {
+            this.onParsedObservable.notifyObservers(data);
+            this.onParsedObservable.clear();
+
+            this._log(`Loading ${fileName || ""}`);
+            this._loader = this._getLoader(data);
+            return this._loader.importMeshAsync(meshesNames, scene, null, data, rootUrl, onProgress, fileName);
+        });
+    }
+
+    /**
+     * @internal
+     */
+    public loadAsync(scene: Scene, data: any, rootUrl: string, onProgress?: (event: ISceneLoaderProgressEvent) => void, fileName?: string): Promise<void> {
+        return Promise.resolve().then(() => {
+            this.onParsedObservable.notifyObservers(data);
+            this.onParsedObservable.clear();
+
+            this._log(`Loading ${fileName || ""}`);
+            this._loader = this._getLoader(data);
+            return this._loader.loadAsync(scene, data, rootUrl, onProgress, fileName);
+        });
+    }
+
+    /**
+     * @internal
+     */
+    public loadAssetContainerAsync(scene: Scene, data: any, rootUrl: string, onProgress?: (event: ISceneLoaderProgressEvent) => void, fileName?: string): Promise<AssetContainer> {
+        return Promise.resolve().then(() => {
+            this.onParsedObservable.notifyObservers(data);
+            this.onParsedObservable.clear();
+
+            this._log(`Loading ${fileName || ""}`);
+            this._loader = this._getLoader(data);
+
+            // Prepare the asset container.
+            const container = new AssetContainer(scene);
+
+            // Get materials/textures when loading to add to container
+            const materials: Array<Material> = [];
+            this.onMaterialLoadedObservable.add((material) => {
+                materials.push(material);
+            });
+            const textures: Array<BaseTexture> = [];
+            this.onTextureLoadedObservable.add((texture) => {
+                textures.push(texture);
+            });
+            const cameras: Array<Camera> = [];
+            this.onCameraLoadedObservable.add((camera) => {
+                cameras.push(camera);
+            });
+
+            const morphTargetManagers: Array<MorphTargetManager> = [];
+            this.onMeshLoadedObservable.add((mesh) => {
+                if (mesh.morphTargetManager) {
+                    morphTargetManagers.push(mesh.morphTargetManager);
+                }
+            });
+
+            return this._loader.importMeshAsync(null, scene, container, data, rootUrl, onProgress, fileName).then((result) => {
+                Array.prototype.push.apply(container.geometries, result.geometries);
+                Array.prototype.push.apply(container.meshes, result.meshes);
+                Array.prototype.push.apply(container.particleSystems, result.particleSystems);
+                Array.prototype.push.apply(container.skeletons, result.skeletons);
+                Array.prototype.push.apply(container.animationGroups, result.animationGroups);
+                Array.prototype.push.apply(container.materials, materials);
+                Array.prototype.push.apply(container.textures, textures);
+                Array.prototype.push.apply(container.lights, result.lights);
+                Array.prototype.push.apply(container.transformNodes, result.transformNodes);
+                Array.prototype.push.apply(container.cameras, cameras);
+                Array.prototype.push.apply(container.morphTargetManagers, morphTargetManagers);
+                return container;
+            });
+        });
+    }
 }
 
 /** Optional chunks that are not required for rendering. */
