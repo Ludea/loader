@@ -1,4 +1,4 @@
-import BLPImage from 'BLPImage';
+import BLPImage from 'blploader';
 
 function App() {
   const file = "./loadscreeneasternkingdomwide.blp";

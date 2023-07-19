@@ -561,19 +561,6 @@
     "@babel/plugin-transform-react-jsx-source" "^7.22.5"
     react-refresh "^0.14.0"
 
-"BLPImage@file:../BLP":
-  version "1.0.0"
-  dependencies:
-    assert "^2.0.0"
-    buffer "^6.0.3"
-    crypto-js "^4.1.1"
-    esbuild "^0.18.10"
-    events "^3.3.0"
-    memfs "^4.2.0"
-    path "^0.12.7"
-    stream "^0.0.2"
-    utils "^0.3.1"
-
 acorn-jsx@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
@@ -709,6 +696,21 @@ base64-js@^1.3.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
+
+blploader@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/blploader/-/blploader-0.0.1.tgz#1a029a4e1b5b4a5a8129e6918cfbbac8d0da6eda"
+  integrity sha512-TsElxcs/78nSipzHzhirsYXkBg2TsD2gBz/SpVXEQPThsE6BiuB8q8VbUMRuYZVPb6UzsQ4IEpVnAlcJY5sKwA==
+  dependencies:
+    assert "^2.0.0"
+    buffer "^6.0.3"
+    crypto-js "^4.1.1"
+    esbuild "^0.18.10"
+    events "^3.3.0"
+    memfs "^4.2.0"
+    path "^0.12.7"
+    stream "^0.0.2"
+    utils "^0.3.1"
 
 brace-expansion@^1.1.7:
   version "1.1.11"
@@ -874,9 +876,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 electron-to-chromium@^1.4.431:
-  version "1.4.463"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.463.tgz#8eb04355f24fef5c8097661d14e143f6d8554055"
-  integrity sha512-fT3hvdUWLjDbaTGzyOjng/CQhQJSQP8ThO3XZAoaxHvHo2kUXiRQVMj9M235l8uDFiNPsPa6KHT1p3RaR6ugRw==
+  version "1.4.464"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.464.tgz#2f94bad78dff34e527aacbfc5d0b1a33cf046507"
+  integrity sha512-guZ84yoou4+ILNdj0XEbmGs6DEWj6zpVOWYpY09GU66yEb0DSYvP/biBPzHn0GuW/3RC/pnaYNUWlQE1fJYtgA==
 
 emitter-component@^1.1.1:
   version "1.1.1"
@@ -2064,9 +2066,9 @@ which@^2.0.1:
     isexe "^2.0.0"
 
 word-wrap@^1.1.0:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.3.tgz#610636f6b1f703891bd34771ccb17fb93b47079c"
-  integrity sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.4.tgz#cb4b50ec9aca570abd1f52f33cd45b6c61739a9f"
+  integrity sha512-2V81OA4ugVo5pRo46hAoD2ivUJx8jXmWXfUkY4KFNw0hEptvN0QfH3K4nHiwzGeKl5rFKedV48QVoqYavy4YpA==
 
 wrappy@1:
   version "1.0.2"
